@@ -1,6 +1,6 @@
 # DeepLabCut Experimental Data Processing (Ciona adult)
 
-This repository contains small, focused modules for processing experimental data and computing behavior/shape metrics in a simple, scriptable style.
+This repository contains modules for processing experimental data and computing behavior/shape metrics.
 
 ## Modules
 
