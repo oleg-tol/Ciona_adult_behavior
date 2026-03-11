@@ -1,81 +1,52 @@
-# DeepLabCut Experimental Data Processing (Ciona adult)
+# DeepLabCut Behavioural Analysis — *Ciona intestinalis* Adult
 
-This repository contains modules for processing experimental data and computing behavior/shape metrics.
-
-## Modules
-
-- **data_loading.py** — Loads and merges `*filtered.csv` files, removes likelihood columns, optionally resamples, and adds condition labels.
-- **shape_metrics.py** — Computes polygon area, oral/atrial siphon widths & areas, and mantle area.
-- **metrics_detrending.py** — Detrends metrics (seasonal decomposition), fills gaps, smooths, and z‑scores time series.
-- **state_definition.py** — Detects contraction events, classifies them (full/half), finds quiescence, and builds a unified state map.
-- **efd_wavelets_pca.py** — Computes per‑frame elliptic Fourier descriptors (EFD), per‑animal wavelet features, and static/dynamic PCs.
-- **embedding_clustering.py** — Embeds static PCs with t‑SNE, clusters with DBSCAN, plots by state/condition, and reconstructs cluster medoid shapes.
-
-## Requirements
-
-- Python 3.x
-- Pandas
-- NumPy
-
-*(For advanced steps you may also need: SciPy, statsmodels, scikit‑learn, shapely, tslearn, pyefd, PyWavelets, openTSNE, matplotlib, seaborn, joblib.)*
-
-## Setup
-
-1. Install the required packages.
-2. Update file paths/arguments in the source files (or pass via CLI flags).
-3. Run the desired module.
-
-## Metric Calculation Module
-
-The analysis functions span the core steps used in our experiments:
-
-- **Shape metrics**: polygon areas; oral/atrial widths & areas; mantle area.
-- **Detrending & normalization**: seasonal decomposition, interpolation/recovery of short gaps, smoothing, z‑scoring.
-- **State metrics**: contraction peak detection and categorization, quiescence detection, unified state map, summary features.
-- **Descriptors & PCs**: EFD time series, wavelet summaries, static and dynamic principal components.
-- **Embedding & clustering**: t‑SNE embedding, DBSCAN clustering, cluster medoid reconstruction.
-
-## Usage
-
-Import the modules in your script or run them directly from the command line to produce the corresponding CSV outputs and (when applicable) figures.
-
-# DeepLabCut Experimental Data Processing (Ciona adult)
-
-This repository contains small, focused modules for processing experimental data and computing behavior/shape metrics in a simple, scriptable style.
+Pipeline for processing DLC tracking data and computing behaviour and shape metrics.
 
 ## Modules
 
-- **data_loading.py** — Loads and merges `*filtered.csv` files, removes likelihood columns, optionally resamples, and adds condition labels.
-- **shape_metrics.py** — Computes polygon area, oral/atrial siphon widths & areas, and mantle area.
-- **metrics_detrending.py** — Detrends metrics (seasonal decomposition), fills gaps, smooths, and z‑scores time series.
-- **state_definition.py** — Detects contraction events, classifies them (full/half), finds quiescence, and builds a unified state map.
-- **efd_wavelets_pca.py** — Computes per‑frame elliptic Fourier descriptors (EFD), per‑animal wavelet features, and static/dynamic PCs.
-- **embedding_clustering.py** — Embeds static PCs with t‑SNE, clusters with DBSCAN, plots by state/condition, and reconstructs cluster medoid shapes.
+| File | Description |
+|------|-------------|
+| `Loading_data.py` | Load and merge `*filtered.csv` DLC output files, resample, add condition labels |
+| `Contraction_metrics.py` | Polygon area, oral/atrial siphon widths & areas, mantle area, contraction amplitude & speed |
+| `Contraction_data_preprocessing.py` | Seasonal decomposition, gap recovery, smoothing, z-scoring |
+| `State_detection_from_contraction_metrics.py` | Contraction peak detection, full/half classification, quiescence detection, unified state map |
+| `Shape_metrics.py` | EllipseAspectRatio, Solidity, BodyAngle |
+| `Eigen_cionas_efds_pca.py` | EFD extraction, harmonic amplitudes (Eigen Ciona), balanced discovery set, PCA, alpha-centering |
+| `Embedding.py` | UMAP embedding, HDBSCAN/GMM cluster search, fixed-K GMM, KNN label propagation to full dataset |
+| `HMM.py` | HMM feature preparation (NPC + derivatives), sticky GaussianHMM fitting, post-hoc smoothing, dwell summaries |
+
+## Pipeline
+
+```
+DLC *filtered.csv
+  → Loading_data.py                  →  x_final.csv, y_final.csv
+  → Contraction_metrics.py       →  *_processed.csv  (6 metrics)
+  → Contraction_data_preprocessing.py            →  *_zscored.csv
+  → State_detection_from_contraction_metrics.py           →  contraction_events.csv, unified_state_map.csv
+  → Shape_metrics.py       →  *_processed.csv  (3 metrics)
+  → Eigen_cionas_efds_pca.py                   →  efd_amplitudes.parquet, pca_*_ALPHA0.20.parquet
+  → Embedding.py      →  UMAP embedding, cluster parquets, knn full dataset
+  → HMM.py                →  decoded_states_all.parquet, dwell summaries
+```
+
+## Key parameters
+
+| Parameter | Value | Location |
+|-----------|-------|----------|
+| FPS / frame skip | 20 / 5 → 0.25 s/frame | `load_dlc.py` |
+| Tile size | 245 µm | `contraction_metrics.py` |
+| Decomposition period | 50 frames | `detrend_zscore.py` |
+| Peak detection | prominence=0.7, distance=5, width=5 | `state_detection.py` |
+| EFD order / harmonics used | 30 / 2–11 | `efd_pca.py` |
+| Alpha-centering | α=0.2 | `efd_pca.py` |
+| HMM states / downsample | K=8 / 5× | `hmm_states.py` |
 
 ## Requirements
 
-- Python 3.x
-- Pandas
-- NumPy
+```
+pandas numpy scipy statsmodels scikit-learn shapely
+pyefd joblib umap-learn hdbscan hmmlearn
+matplotlib seaborn
+```
 
-*(For advanced steps you may also need: SciPy, statsmodels, scikit‑learn, shapely, tslearn, pyefd, PyWavelets, openTSNE, matplotlib, seaborn, joblib.)*
-
-## Setup
-
-1. Install the required packages.
-2. Update file paths/arguments in the source files (or pass via CLI flags).
-3. Run the desired module.
-
-## Metric Calculation Module
-
-The analysis functions span the core steps used in our experiments:
-
-- **Shape metrics**: polygon areas; oral/atrial widths & areas; mantle area.
-- **Detrending & normalization**: seasonal decomposition, interpolation/recovery of short gaps, smoothing, z‑scoring.
-- **State metrics**: contraction peak detection and categorization, quiescence detection, unified state map, summary features.
-- **Descriptors & PCs**: EFD time series, wavelet summaries, static and dynamic principal components.
-- **Embedding & clustering**: t‑SNE embedding, DBSCAN clustering, cluster medoid reconstruction.
-
-## Usage
-
-Import the modules in your script or run them directly from the command line to produce the corresponding CSV outputs and (when applicable) figures.
+Edit the path variables in `main()` of each file before running.
