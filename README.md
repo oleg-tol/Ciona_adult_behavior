@@ -33,13 +33,13 @@ DLC *filtered.csv
 
 | Parameter | Value | Location |
 |-----------|-------|----------|
-| FPS / frame skip | 20 / 5 → 0.25 s/frame | `load_dlc.py` |
-| Tile size | 245 µm | `contraction_metrics.py` |
-| Decomposition period | 50 frames | `detrend_zscore.py` |
-| Peak detection | prominence=0.7, distance=5, width=5 | `state_detection.py` |
-| EFD order / harmonics used | 30 / 2–11 | `efd_pca.py` |
-| Alpha-centering | α=0.2 | `efd_pca.py` |
-| HMM states / downsample | K=8 / 5× | `hmm_states.py` |
+| FPS / frame skip | 20 / 5 → 0.25 s/frame | `Loading_data.py` |
+| Tile size | 245 µm | `Contraction_metrics.py` |
+| Decomposition period | 50 frames | `Contraction_data_preprocessing.py` |
+| Peak detection | prominence=0.7, distance=5, width=5 | `State_detection_from_contraction_metrics.py` |
+| EFD order / harmonics used | 30 / 2–11 | `Eigen_cionas_efds_pca.py` |
+| Alpha-centering | α=0.2 | `Eigen_cionas_efds_pca.py` |
+| HMM states / downsample | K=8 / 5× | `HMM.py` |
 
 ## Requirements
 
