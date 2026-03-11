@@ -19,14 +19,14 @@ Pipeline for processing DLC tracking data and computing behaviour and shape metr
 
 ```
 DLC *filtered.csv
-  → Loading_data.py                  →  x_final.csv, y_final.csv
-  → Contraction_metrics.py       →  *_processed.csv  (6 metrics)
+  → Loading_data.py                              →  x_final.csv, y_final.csv
+  → Contraction_metrics.py                       →  *_processed.csv  (6 metrics)
   → Contraction_data_preprocessing.py            →  *_zscored.csv
-  → State_detection_from_contraction_metrics.py           →  contraction_events.csv, unified_state_map.csv
-  → Shape_metrics.py       →  *_processed.csv  (3 metrics)
-  → Eigen_cionas_efds_pca.py                   →  efd_amplitudes.parquet, pca_*_ALPHA0.20.parquet
-  → Embedding.py      →  UMAP embedding, cluster parquets, knn full dataset
-  → HMM.py                →  decoded_states_all.parquet, dwell summaries
+  → State_detection_from_contraction_metrics.py  →  contraction_events.csv, unified_state_map.csv
+  → Shape_metrics.py                             →  *_processed.csv  (3 metrics)
+  → Eigen_cionas_efds_pca.py                     →  efd_amplitudes.parquet, pca_*_ALPHA0.20.parquet
+  → Embedding.py                                 →  UMAP embedding, cluster parquets, knn full dataset
+  → HMM.py                                       →  decoded_states_all.parquet, dwell summaries
 ```
 
 ## Key parameters
